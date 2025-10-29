@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router"; // Use react-router-dom
+import { useNavigate } from "react-router";
 
 interface FormState {
   fullName: string;
@@ -174,3 +174,4 @@ const SignupPage: React.FC = () => {
 };
 
 export default SignupPage;
+
