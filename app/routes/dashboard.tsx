@@ -1,5 +1,6 @@
-import DashboardPage from "../pages/DasboardPage";
+import DashboardPage from "../pages/DashboardPage";
 
 export default function DashboardRoute() {
   return <DashboardPage />;
 }
+
