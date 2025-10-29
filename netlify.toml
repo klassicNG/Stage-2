@@ -1,0 +1,13 @@
+[build]
+  # This matches your "npm run build" command
+  command = "npm run build"
+  
+  # THIS IS THE FIX: The correct publish directory is "build/client"
+  publish = "build/client"
+
+[[redirects]]
+  # This rule fixes 404s on sub-pages (like /auth/login)
+  # by serving index.html for all routes.
+  from = "/*"
+  to = "/index.html"
+  status = 200
