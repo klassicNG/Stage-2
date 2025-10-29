@@ -1,0 +1,255 @@
+import React, { useState } from "react";
+import Navbar from "~/components/Navbar"; // Your existing Navbar
+import Footer from "~/components/Footer"; // Your existing Footer
+import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import TicketFormModal from "~/components/TicketFormModal";
+import type { Ticket } from "~/types"; // Import the type
+
+// --- MOCK DATA FOR SIMULATION ---
+const MOCK_TICKETS: Ticket[] = [
+  {
+    id: "TKT-001",
+    title: "Website login form is broken",
+    description:
+      "Users are reporting they cannot log in. The submit button is disabled.",
+    status: "in_progress",
+    priority: "high",
+  },
+  {
+    id: "TKT-002",
+    title: "Update homepage copy",
+    description: "Marketing needs the new tagline added to the hero section.",
+    status: "open",
+    priority: "medium",
+  },
+  {
+    id: "TKT-003",
+    title: "Server migration",
+    description: "Migrate all services from AWS to Azure.",
+    status: "closed",
+    priority: "low",
+  },
+];
+
+// --- 2. TICKET CARD COMPONENT (Can be in a new file) ---
+// This is the reusable card for the "Read" view
+interface TicketCardProps {
+  ticket: Ticket;
+  onEdit: (ticket: Ticket) => void;
+  onDelete: (ticket: Ticket) => void;
+}
+
+const TicketCard: React.FC<TicketCardProps> = ({
+  ticket,
+  onEdit,
+  onDelete,
+}) => {
+  // Get colors based on task requirements
+  const statusColors = {
+    open: "bg-green-100 text-green-800",
+    in_progress: "bg-yellow-100 text-yellow-800",
+    closed: "bg-gray-100 text-gray-800",
+  };
+
+  return (
+    <div className="bg-white text-slate-900 rounded-lg shadow-lg p-6 flex flex-col justify-between">
+      <div>
+        <div className="flex justify-between items-start mb-2">
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[ticket.status]}`}
+          >
+            {ticket.status.replace("_", " ")}
+          </span>
+          <span className="text-sm text-gray-500 font-medium">{ticket.id}</span>
+        </div>
+        <h3 className="text-xl font-bold mb-2">{ticket.title}</h3>
+        <p className="text-slate-600 text-sm mb-4">
+          {ticket.description || "No description provided."}
+        </p>
+      </div>
+      <div className="flex justify-between items-center border-t pt-4">
+        <span className="text-sm font-medium capitalize">
+          Priority: {ticket.priority}
+        </span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onEdit(ticket)}
+            className="text-blue-600 hover:text-blue-800"
+            aria-label="Edit ticket"
+          >
+            <FaEdit />
+          </button>
+          <button
+            onClick={() => onDelete(ticket)}
+            className="text-red-600 hover:text-red-800"
+            aria-label="Delete ticket"
+          >
+            <FaTrash />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- 3. MAIN PAGE COMPONENT ---
+const TicketManagementPage: React.FC = () => {
+  const [tickets, setTickets] = useState<Ticket[]>(MOCK_TICKETS);
+
+  // State for modals
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // State for tracking the ticket being C/U/D
+  const [currentTicket, setCurrentTicket] = useState<Ticket | null>(null);
+
+  // --- CRUD FUNCTIONS ---
+
+  // C: Open modal for creating
+  const handleOpenCreate = () => {
+    setCurrentTicket(null); // Clear ticket to signal "Create" mode
+    setIsModalOpen(true);
+  };
+
+  // U: Open modal for updating
+  const handleOpenEdit = (ticket: Ticket) => {
+    setCurrentTicket(ticket); // Set ticket to signal "Edit" mode
+    setIsModalOpen(true);
+  };
+
+  // D: Open confirmation modal
+  const handleOpenDelete = (ticket: Ticket) => {
+    setCurrentTicket(ticket);
+    setIsDeleteModalOpen(true);
+  };
+
+  // --- This would be your <TicketFormModal> component ---
+  const handleSaveTicket = (formData: Omit<Ticket, "id">) => {
+    // This is where you'd validate the formData
+
+    if (currentTicket) {
+      // UPDATE logic
+      setTickets(
+        tickets.map((t) =>
+          t.id === currentTicket.id ? { ...t, ...formData } : t
+        )
+      );
+    } else {
+      // CREATE logic
+      const newTicket: Ticket = {
+        ...formData,
+        id: `TKT-${Math.floor(Math.random() * 1000)
+          .toString()
+          .padStart(3, "0")}`,
+      };
+      setTickets([newTicket, ...tickets]);
+    }
+    setIsModalOpen(false);
+    setCurrentTicket(null);
+  };
+
+  // --- This would be your <DeleteConfirmModal> component ---
+  const handleConfirmDelete = () => {
+    if (!currentTicket) return;
+
+    // DELETE logic
+    setTickets(tickets.filter((t) => t.id !== currentTicket.id));
+
+    setIsDeleteModalOpen(false);
+    setCurrentTicket(null);
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Navbar isLoggedIn={true} />
+
+      <main className="flex-grow bg-slate-900 text-white">
+        <div className="max-w-[1440px] mx-auto px-6 py-12">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <h1 className="text-3xl font-bold text-center md:text-left">
+              Manage Tickets
+            </h1>
+            <button
+              onClick={handleOpenCreate} // This triggers setIsModalOpen(true)
+              className="bg-green-700 text-white py-2 px-5 rounded-lg font-semibold hover:bg-green-800 transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
+            >
+              <FaPlus />
+              Create New Ticket
+            </button>
+          </div>
+
+          {/* Ticket Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tickets.length === 0 ? (
+              <p className="text-center text-slate-400 md:col-span-2 lg:col-span-3">
+                No tickets found. Create one!
+              </p>
+            ) : (
+              tickets.map((ticket) => (
+                <TicketCard
+                  key={ticket.id}
+                  ticket={ticket}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleOpenDelete}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      {/* --- MODALS --- */}
+      {/* Create/Edit Modal using the actual component */}
+      <TicketFormModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setCurrentTicket(null);
+        }}
+        onSubmit={handleSaveTicket}
+        initialData={currentTicket}
+      />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && currentTicket && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
+          <div className="bg-white text-slate-900 p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-md text-center">
+            <h2 className="text-xl md:text-2xl font-bold mb-4">
+              Are you absolutely sure?
+            </h2>
+            <p className="text-slate-600 mb-6 text-sm md:text-base">
+              This action cannot be undone. This will permanently delete the
+              ticket:
+              <br />
+              <strong className="font-medium">
+                {currentTicket.title} (#{currentTicket.id})
+              </strong>
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setCurrentTicket(null);
+                }}
+                className="py-2 px-6 rounded-lg text-slate-700 bg-gray-200 hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="py-2 px-6 rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div> // Closing root div
+  );
+};
+
+export default TicketManagementPage;
