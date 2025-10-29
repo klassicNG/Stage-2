@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "~/components/navbar";
-import Footer from "~/components/footer";
+import Navbar from "~/components/Navbar";
+import Footer from "~/components/Footer";
 import { Link } from "react-router";
 import { FaCog, FaBolt, FaShieldAlt } from "react-icons/fa";
 
@@ -117,3 +117,4 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
+
