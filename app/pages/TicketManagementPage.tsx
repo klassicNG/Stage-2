@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Navbar from "~/components/Navbar"; // Your existing Navbar
-import Footer from "~/components/Footer"; // Your existing Footer
+import Navbar from "~/components/Navbar";
+import Footer from "~/components/Footer"; 
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import TicketFormModal from "~/components/TicketFormModal";
-import type { Ticket } from "~/types"; // Import the type
+import type { Ticket } from "~/types"; 
 
 // --- MOCK DATA FOR SIMULATION ---
 const MOCK_TICKETS: Ticket[] = [
@@ -253,3 +253,4 @@ const TicketManagementPage: React.FC = () => {
 };
 
 export default TicketManagementPage;
+
