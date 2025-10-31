@@ -1,13 +1,12 @@
 [build]
-  # This matches your "npm run build" command
+  # This tells Netlify *what* to run
   command = "npm run build"
   
-  # THIS IS THE FIX: The correct publish directory is "build/client"
-  publish = "build/client"
+  # This tells Netlify *where* to find the finished site
+  publish = "build/client" 
 
 [[redirects]]
-  # This rule fixes 404s on sub-pages (like /auth/login)
-  # by serving index.html for all routes.
+  # This is the SPA rule that fixes your "Page not found" error
   from = "/*"
   to = "/index.html"
   status = 200
