@@ -1,26 +1,17 @@
-# Welcome to React Router!
+# Ticket Management Framework App (Stage-2)
 
-A modern, production-ready template for building full-stack React applications using React Router.
+**Status: Work-in-Progress 🚧**
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+This is a multi-framework ticket management web application I'm building. The goal is to explore how different frameworks (like React, Vue, and Twig) can work together.
 
-## Features
+### Tech Stack
+* TypeScript
+* React
+* Vue.js
+* Twig
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
+### Current Focus
+* Setting up the core project structure and routing.
 npm install
 ```
 
